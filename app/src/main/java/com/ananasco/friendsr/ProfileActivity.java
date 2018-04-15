@@ -25,11 +25,13 @@ public class ProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
 
+        // retrieve the data that was passed to this event in the Intent
         Intent intent = getIntent();
         retrievedFriend = (Friend) intent.getSerializableExtra("clicked_friend");
         pbLeft = intent.getIntExtra("pBLeft", 0);
         mbLeft = intent.getIntExtra("mBLeft", 0);
 
+        // do a bunch of drawing of info and UI based on data passed by the Intent
         ((TextView)findViewById(R.id.bio)).setText("Bio: " + retrievedFriend.getBio());
         ((ImageView)findViewById(R.id.img)).setImageResource(retrievedFriend.getDrawableId());
         ((TextView)findViewById(R.id.encounterText))
@@ -38,6 +40,8 @@ public class ProfileActivity extends AppCompatActivity {
         ((TextView)findViewById(R.id.leftMb)).setText(" X"+mbLeft);
         ((RatingBar)findViewById(R.id.rating)).setRating(retrievedFriend.getRating());
 
+        // whenever the rating bar is changed, the rating is updated for the friend and then saved
+        // to the SharedPreferences in save()
         ((RatingBar)findViewById(R.id.rating))
                 .setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
 
@@ -46,17 +50,27 @@ public class ProfileActivity extends AppCompatActivity {
                                         boolean fromUser) {
                 retrievedFriend.setRating(rating);
                 save(retrievedFriend);
-                Log.i(",","hoiiiii");
             }
         });
 
 
-        /* Thanks https://stackoverflow.com/questions/4139288/
+        /**
+         * This code handles the Tinder-eqsue swipe gestures, I couldn't resist. The UI clarifies
+         * the gestures, but swiping left means leaving the pokemon, swiping right means capturing
+         * it (liking it) and swiping up means throwing a masterball (a superlike ;))
+         * The game will only allow the user to throw a ball if the user still has them.
+         * Throwing the masterball will result in an additional confirmation prompt.
+         * The swipe gestures only work on the swipe area as indicated by the UI.
+         * All succesful swipe action end with the closing of the ProfileActivity to return to the
+         * MainActivity.
+         *
+         * Thanks https://stackoverflow.com/questions/4139288/
          * android-how-to-handle-right-to-left-swipe-gestures
          */
         findViewById(R.id.all)
                 .setOnTouchListener(new OnSwipeTouchListener(getApplicationContext()) {
                     @Override
+                    // Let the pokemon go
                     public void onSwipeLeft() {
                         retrievedFriend.setLiked(Boolean.FALSE);
                         retrievedFriend.setSuperLiked(Boolean.FALSE);
@@ -69,9 +83,14 @@ public class ProfileActivity extends AppCompatActivity {
                     }
 
                     @Override
+                    // Capture (like) the pokemon, if the user still has pokeballs. Otherwise, show a
+                    // Toast.
                     public void onSwipeRight() {
                         if (pbLeft > 0){
+
+                            // make sure to decrease total pokeballs!
                             pbLeft --;
+
                             retrievedFriend.setLiked(Boolean.TRUE);
                             save(retrievedFriend);
                             Toast.makeText(ProfileActivity.this,
@@ -88,9 +107,17 @@ public class ProfileActivity extends AppCompatActivity {
                     }
 
                     @Override
+                    // Capture and superlike the pokemon if the user still has masterballs.
+                    // Otherwise, show a Toast. Requires additional confirmation.
                     public void onSwipeUp() {
                         if (mbLeft > 0){
+
+                            // make sure to decrease total masterballs!
                             mbLeft --;
+
+                            // Create a dialogprompt with a yes and a no button: if the user answers
+                            // yes, the pokemon is superliked and one ball removed. If not, nothing
+                            // happens.
                             new AlertDialog.Builder(ProfileActivity.this)
                                     .setTitle("Are you sure")
                                     .setMessage("Do you really want to throw a masterball?")
@@ -119,6 +146,8 @@ public class ProfileActivity extends AppCompatActivity {
         });
     }
 
+    // Helper function to save all information about a Friend in the SharedPreferences. Variables
+    // of a Friend are stored in the preferences under the name of that Friend.
     private void save(Friend f){
         SharedPreferences.Editor editor =
                 getSharedPreferences("saved", MODE_PRIVATE).edit();
@@ -126,6 +155,8 @@ public class ProfileActivity extends AppCompatActivity {
         editor.putBoolean(f.getName() + "_liked", f.getLiked());
         editor.putBoolean(f.getName() + "_super", f.getSuperLiked());
         editor.putFloat(f.getName() + "_rating", f.getRating());
+
+        // amount of poke- and masterballs left
         editor.putInt("pBLeft", pbLeft);
         editor.putInt("mBLeft", mbLeft);
         editor.apply();

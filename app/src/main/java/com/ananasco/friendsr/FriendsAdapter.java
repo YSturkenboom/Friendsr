@@ -20,7 +20,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by yuri on 10-4-18.
+ * Just the modified ArrayAdapter explained in the tutorial. Where the code is unique for this
+ * project there are some additional comments
  */
 
 public class FriendsAdapter extends ArrayAdapter<Friend> {
@@ -38,25 +39,36 @@ public class FriendsAdapter extends ArrayAdapter<Friend> {
         if (convertView == null) {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.grid_item, parent, false);
         }
+
+        // moved drawing functions to a separate function to keep things tidy
         drawFriend(convertView, friends.get(position));
+
         return convertView;
     }
 
+    /**
+     * Draws all the Views in the GridView items. Takes a baseView defining the View in which
+     * Android should look for the Views, and a Friend to define which Friend's data to use
+     * to draw the Views with.
+     */
     private void drawFriend(View baseView, Friend friend){
         ((TextView)baseView.findViewById(R.id.distance)).setText(friend.getDistance() + " km away");
         ((TextView)baseView.findViewById(R.id.name)).setText(friend.getName());
         ((ImageView)baseView.findViewById(R.id.img)).setImageResource(friend.getDrawableId());
-        //((TextView)baseView.findViewById(R.id.liked)).setText(friend.getLiked().toString());
 
-
+        // A Tinder 'superlike' is shown by a sprite of a masterball :)
         if (friend.getSuperLiked()) {
             ((ImageView) baseView.findViewById(R.id.pokeball))
                     .setImageResource(R.drawable.masterball);
         }
         else {
+
+            // A normal like is shown by a sprite of a pokeball
             if (friend.getLiked()) {
                 ((ImageView) baseView.findViewById(R.id.pokeball))
                         .setImageResource(R.drawable.pokeball);
+
+                // No like is shown by a greyed out pokeball
             } else {
                 ((ImageView) baseView.findViewById(R.id.pokeball))
                         .setImageResource(R.drawable.nopokeball);

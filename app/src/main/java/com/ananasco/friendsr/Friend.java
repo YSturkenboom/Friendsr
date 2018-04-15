@@ -8,18 +8,20 @@ import java.io.Serializable;
 
 public class Friend implements Serializable {
     private String name, bio;
-    private int drawableId;
+    private int drawableId, distance;
     private float rating;
-    private Boolean liked;
-    private Boolean superLiked;
-    private int distance;
+    private Boolean liked, superLiked;
 
     public Friend(String name, String bio, int drawableId) {
         this.name = name;
         this.bio = bio;
         this.drawableId = drawableId;
+
+        // defaults to false
         this.liked = Boolean.FALSE;
         this.superLiked = Boolean.FALSE;
+
+        // distance is instantiated randomly the first time the Firend is created
         this.distance = (int) Math.round(20 * Math.random());
     }
 

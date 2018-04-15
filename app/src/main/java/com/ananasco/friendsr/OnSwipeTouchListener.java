@@ -7,6 +7,9 @@ import android.view.View;
 
 /**
  * Detects left and right swipes across a view.
+ *
+ * Code sourced from https://stackoverflow.com/questions/4139288/
+ * android-how-to-handle-right-to-left-swipe-gestures
  */
 public class OnSwipeTouchListener implements View.OnTouchListener {
 

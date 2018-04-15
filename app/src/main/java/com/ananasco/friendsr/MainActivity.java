@@ -4,9 +4,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
-import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.GridView;
 
@@ -17,6 +15,9 @@ public class MainActivity extends AppCompatActivity {
     ArrayList<Friend> friends = new ArrayList<>();
     FriendsAdapter friendsAdapter;
     Boolean initialised = false;
+
+    // There is a limited amount of pokeballs and masterballs! (likes)
+    // So choose wisely :)
     int pokeballsLeft = 2;
     int masterballsLeft = 1;
 
@@ -24,10 +25,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        /*for (int i = 0; i < 30; i++){
-            friends.add(i, new Friend("Ditto", "Pink blob", R.drawable.ditto));
-        }*/
 
         if (!initialised) {
             // Add some friends when the app is opened for the first time.
@@ -80,6 +77,8 @@ public class MainActivity extends AppCompatActivity {
         gv.setOnItemClickListener(new GridItemClickListener());
     }
 
+    // If for whatever reason the activity is paused and then resumed, we want to make sure that
+    // the data of the friends (Pokemon) is restored.
     @Override
     public void onResume() {
         super.onResume();  // Always call the superclass method first
@@ -100,6 +99,10 @@ public class MainActivity extends AppCompatActivity {
         friendsAdapter.notifyDataSetChanged();
     }
 
+    // This OnItemClickListener starts the ProfileActivity where the user can take a closer look
+    // at a friend. To make sure that we have the necessary data when we arrive there, we take
+    // the Friend that was clicked with us in serialized form, as well as the amount of pokeballs
+    // and masterballs that the user has remaining.
     private class GridItemClickListener implements AdapterView.OnItemClickListener {
         @Override
         public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -112,8 +115,11 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    // Is called by the debug reset button and resets likes and refunds pokeballs and masterballs.
+    // Would obviously be removed or moved to an admin page is this were a full game
     public void reset(View view){
 
+        // If the preferences are not cleared, next update the old data will just be applied again!
         getSharedPreferences("saved", MODE_PRIVATE).edit().clear().apply();
 
         for (int i = 0; i < friends.size(); i++){
@@ -123,6 +129,7 @@ public class MainActivity extends AppCompatActivity {
             f.setRating(-1);
         }
 
+        // refund poke- and masterballs
         pokeballsLeft = 2;
         masterballsLeft = 1;
 
