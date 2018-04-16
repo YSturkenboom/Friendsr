@@ -1,6 +1,8 @@
 # Ketchum
 It's like Tinder, but with Pokémon. Part of the Native App Studio course.
 
+![screenie](/doc/screen.png)
+
 This assignment involves building a Tinder-like app with indivdual profiles and ListViews, to practice with multiple activities and lists. So why not go all the way and add in the infamous Tinder swiping too?
 And it's no fun making a second Tinder, so why not some Pokémon to the mix to keep it interesting?
 
