@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 
+import android.media.MediaPlayer;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -19,11 +20,15 @@ public class ProfileActivity extends AppCompatActivity {
     Friend retrievedFriend;
     int pbLeft;
     int mbLeft;
+    MediaPlayer mediaPlayer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
+
+        // play some battle music >:)
+        mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.battle);
 
         // retrieve the data that was passed to this event in the Intent
         Intent intent = getIntent();
@@ -160,5 +165,17 @@ public class ProfileActivity extends AppCompatActivity {
         editor.putInt("pBLeft", pbLeft);
         editor.putInt("mBLeft", mbLeft);
         editor.apply();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        mediaPlayer.stop();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        mediaPlayer.start(); // no need to call prepare(); create() does that for you
     }
 }

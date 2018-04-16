@@ -2,6 +2,7 @@ package com.ananasco.friendsr;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.media.MediaPlayer;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -15,6 +16,7 @@ public class MainActivity extends AppCompatActivity {
     ArrayList<Friend> friends = new ArrayList<>();
     FriendsAdapter friendsAdapter;
     Boolean initialised = false;
+    MediaPlayer mediaPlayer;
 
     // There is a limited amount of pokeballs and masterballs! (likes)
     // So choose wisely :)
@@ -25,6 +27,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.pokemonrubysapphiresootopoliscity);
 
         if (!initialised) {
             // Add some friends when the app is opened for the first time.
@@ -135,5 +139,17 @@ public class MainActivity extends AppCompatActivity {
 
         // actually update the adapter
         friendsAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        mediaPlayer.stop();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        mediaPlayer.start(); // no need to call prepare(); create() does that for you
     }
 }
